@@ -7,7 +7,7 @@
 # this stuff is worth it, you can buy me a beer in return Mikhail Zakharov
 # -----------------------------------------------------------------------------
 
-# List all WWNS with additional info in a given Brocade fabric 
+# List all WWNS with additional info of a given Brocade fabric 
 # v 0.3 
  
 # -----------------------------------------------------------------------------
