@@ -6,8 +6,8 @@ libssh2 must be installed to complile fashion.
 
 To compile fashion run:
 
-make
+```make```
 
 To compile under Solaris:
 
-make solaris
+```make solaris```
