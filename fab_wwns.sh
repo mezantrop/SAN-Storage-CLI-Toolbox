@@ -1,12 +1,15 @@
 #!/bin/sh
 
+# -----------------------------------------------------------------------------
+# "THE BEER-WARE LICENSE" (Revision 42):
+# zmey20000@yahoo.com wrote this file. As long as you retain this notice you
+# can do whatever you want with this stuff. If we meet some day, and you think
+# this stuff is worth it, you can buy me a beer in return Mikhail Zakharov
+# -----------------------------------------------------------------------------
+
 # List all WWNS with additional info in a given Brocade fabric 
 # v 0.3 
  
-switch="192.168.187.223"
-login="admin"
-password="password"
-
 # -----------------------------------------------------------------------------
 fashion="../fashion/fashion"
 awk="nawk"
@@ -24,7 +27,6 @@ usage() {
 switch="$1"
 login="$2"
 password="$3"
-
 
 $fashion $switch $login $password "fabricshow" > /tmp/fabricshow.$switch.txt 2> /dev/null
 ($fashion $switch $login $password "nscamshow" 2> /dev/null && $fashion $switch $login $password "nsshow" 2> /dev/null) | 
