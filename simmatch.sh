@@ -10,10 +10,10 @@
 # simmatch.sh - Scan IBM SVC/Storwize system for "SCSI ID Mismatches"
 # 2017.08.31    v1.0
 
-delim=","						# Main delimiter
-delim2=";"						# Second layer delimiter
+delim=","			# Main delimiter
+delim2=";"			# Second layer delimiter
 fashion="../fashion/fashion"	# fashion SSH wrapper. Comment/uncomment the
-							# appropriate lines below if you want pure SSH
+				# appropriate lines below if you want pure SSH
 
 lshostvdiskmap="lshostvdiskmap -nohdr -delim $delim"
 
