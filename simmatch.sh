@@ -31,7 +31,7 @@ target="$1"
 user="$2"
 password="$3"
 
-awk="gawk"						# We need gawk to do the stuff
+awk="gawk"				# We need gawk to do the stuff
 
 # Uncomment ssh and comment fashion if you like
 #ssh "$user"@"$target" "$lshostvdiskmap" | $awk -F "$delim" -v d2=$delim2 '
@@ -41,8 +41,8 @@ $fashion "$target" "$user" "$password" "$lshostvdiskmap" |
 	# Put all records into an array
 	for (f = 1; f <= NF; f++)
 		dm[NR, f] = $f
-	dm[NR, NF + 1] = 0					# Mapping count
-	dm[NR, NF + 2] = ""					# SCSI ID List
+	dm[NR, NF + 1] = 0		# Mapping count
+	dm[NR, NF + 2] = ""		# SCSI ID List
 }
 
 END {
