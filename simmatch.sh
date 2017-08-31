@@ -13,7 +13,7 @@
 delim=","						# Main delimiter
 delim2=";"						# Second layer delimiter
 fashion="../fashion/fashion"	# fashion SSH wrapper. Comment/uncomment the
-								# appropriate lines below if you want pure SSH
+							# appropriate lines below if you want pure SSH
 
 lshostvdiskmap="lshostvdiskmap -nohdr -delim $delim"
 
