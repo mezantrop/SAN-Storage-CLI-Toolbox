@@ -74,15 +74,15 @@ END {
 
 	# Print out report
 	print "Host ID", "Host Name", "SCSI ID", "Vdisk ID",\
-			"Vdisk Name", "Vdisk UID", "IO Group ID",\
-			"IO Group Name", "Mapping count", "SCSI ID List"
+		"Vdisk Name", "Vdisk UID", "IO Group ID",\
+		"IO Group Name", "Mapping count", "SCSI ID List"
 
 	for (l = 1; l <= NR; l++)
 		if (split(dm[l, NF + 2], sidlst, d2) > 2) {
-				for (f = 1; f < NF + 2; f++)
-					printf dm[l, f] OFS
-				# Ugly strip of the last "d2" occurrence
-				printf substr(dm[l, NF + 2], 1, length(dm[l, NF + 2]) - 1)"\n"
+			for (f = 1; f < NF + 2; f++)
+				printf dm[l, f] OFS
+			# Ugly strip of the last "d2" occurrence
+			printf substr(dm[l, NF + 2], 1, length(dm[l, NF + 2]) - 1)"\n"
 		}
 } 
 '
