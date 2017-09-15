@@ -6,4 +6,4 @@ A collection of Simple SAN/Storage Command Line tools and utilities
 * **zoneparse.sh** - Get and parse "zoneshow" from Brocade fabric switch
 * **fashion** - A simple wrapper to run commands over SSH2
 * **simmatch.sh** - Scan IBM SVC/Storwize system for "SCSI ID Mismatches". It shows the list of the same vdisks that are mapped with different SCSI IDs. Should be useful for clusters, especially VMware.
-* **svcrun.py** - using SSH execute a batch of commands on multiple IBM SVC/Storwize storage systems
+* **svcrun.py** - using SSH, execute a batch of commands on multiple IBM SVC/Storwize storage systems
