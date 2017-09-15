@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # svcrun.py - using SSH, execute a batch of commands on multiple IBM SVC/Storwize storage systems
 # 
 # Python 3 and paramiko module are required
