@@ -1,5 +1,5 @@
 /*
- * fashion - SSH2 command exec wrapper
+ * fashion - Simple wrapper to run commands over SSH without typing passwords every time
  *
  * usage:
  * 	fashion host user password "command"
