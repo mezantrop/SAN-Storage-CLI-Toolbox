@@ -10,11 +10,12 @@
 # -----------------------------------------------------------------------------
 
 # -- CHANGELOG -----------------------------------------------------------------
-# 2019.11.29, v1.0, Mikhail Zakharov <zmey20000@yahoo.com>, Initial release
+# 2019.11.29, v1.0,   Mikhail Zakharov <zmey20000@yahoo.com>, Initial release
+# 2019.12.02, v1.0.1, Mikhail Zakharov <zmey20000@yahoo.com>, Cosmetic changes
 
 # -- USAGE ---------------------------------------------------------------------
 # mds_wwnlook.ps1 -user <user> -password <Secret1!> -target <address> -wwn <WWN>
-#            [-ssh_command plink.exe -ssh_options -ssh -C -batch]
+#            [-ssh_command plink.exe] [-ssh_options -ssh -C -batch]
 #
 # If any of the mandatory arguments is not specifiec in command-line,
 # it is requested interactively.
@@ -58,7 +59,7 @@ foreach ($vsan in $vsans) {
         # Lookup the WWN in nameserver data dump
             if ($nswwn[1] -eq $wwn) {
                 # write output to the CSV file
-                $out_data = [string]$nswwn[1] + $delim + [string]$inwwn."Port" + $delim + [string]$vsan + $delim + [string]$nswwn[0]
+                $out_data = [string]$nswwn[1] + [string]$inwwn."Port" + [string]$vsan + [string]$nswwn[0]
                 Write-Host "VSAN:", $vsan, "FCID:", $nswwn[0]
                 break
             }
