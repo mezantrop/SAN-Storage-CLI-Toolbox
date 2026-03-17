@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include <limits.h>
 
-const char *version = "0.0.3";
+const char *version = "0.0.4";
 
 const char *keyfile1 = "~/.ssh/id_rsa.pub";
 const char *keyfile2 = "~/.ssh/id_rsa";
@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
 	LIBSSH2_SESSION *session;
 	LIBSSH2_CHANNEL *channel;
 
-	int exitcode;
+	int exitcode = 0;
 	int bytecount = 0;
 
 
@@ -126,7 +126,7 @@ int main(int argc, char *argv[]) {
 		} else
 			/* wrong fashion usage */
 			(void)usage();
-	
+
 	/* Init LIBSSH2 */
 	if ((rc = libssh2_init(0))) {
 		fprintf (stderr, "libssh2 initialization failed (%d)\n", rc);
@@ -138,23 +138,27 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Host %s not found\n", host);
 		return 1;
 	}
-  
+
 	/* Connect with the host */
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	bcopy(he->h_addr_list[0], &sin.sin_addr, he->h_length);
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons(22);
 	if (connect(sock, (struct sockaddr*)(&sin), sizeof(struct sockaddr_in)) != 0) {
-		fprintf(stderr, "failed to connect with %s!\n", host);
+		fprintf(stderr, "Failed to connect with %s!\n", host);
 		return 1;
 	}
 
 	/* Create a session instance and start it up. This will trade welcome
 	* banners, exchange keys, and setup crypto, compression, and MAC layers */
-	session = libssh2_session_init();
-	if (libssh2_session_startup(session, sock)) {
+	if (!(session = libssh2_session_init())) {
+        fprintf(stderr, "Could not initialize SSH session\n");
+        goto shutdown;
+    }
+
+	if (libssh2_session_handshake(session, sock)) {
 		fprintf(stderr, "Failure establishing SSH session\n");
-		return 1;
+		goto shutdown;
 	}
 
 	/* At this point we havn't authenticated. The first thing to do is check
@@ -182,8 +186,8 @@ int main(int argc, char *argv[]) {
 			fprintf(stderr,"Authentication by password succeeded.\n");
 			goto getchannel;
 		}
-	} 
-	
+	}
+
 	if (auth_pw & 2) {
 		/* Or via keyboard-interactive */
 		if (libssh2_userauth_keyboard_interactive(session, username, &kbd_callback) ) {
@@ -192,8 +196,8 @@ int main(int argc, char *argv[]) {
 			fprintf(stderr,"Authentication by keyboard-interactive succeeded.\n");
 			goto getchannel;
 		}
-	} 
-	
+	}
+
 	if (auth_pw & 4) {
         	/* Or by public key */
 		if (libssh2_userauth_publickey_fromfile(session, username, keyfile1, keyfile2, password)) {
@@ -218,7 +222,7 @@ getchannel:
 	while ((rc = libssh2_channel_exec(channel, commandline)) == LIBSSH2_ERROR_EAGAIN ) {
 	        waitsocket(sock, session);
 	}
-    	
+
 	if (rc != 0) {
 		fprintf(stderr, "Error executing command: %s\n", commandline);
 		goto shutdown;
@@ -239,7 +243,7 @@ getchannel:
 			} else
 				fprintf(stderr, "libssh2_channel_read returned %d\n", rc);
 		} while (rc > 0);
-		
+
         	/* this is due to blocking that would occur otherwise so we loop on
 	 	    this condition */
         	if( rc == LIBSSH2_ERROR_EAGAIN )
@@ -252,7 +256,7 @@ getchannel:
 		waitsocket(sock, session);
 
 	if (rc == 0) exitcode = libssh2_channel_get_exit_status(channel);
-	
+
 	libssh2_channel_free(channel);
 	channel = NULL;
 
@@ -269,12 +273,12 @@ shutdown:
 	close(sock);
 	libssh2_exit();
 
-	return 0;
+	return exitcode;
 }
 
-int read_cfgfile(char *cfgfile, char *hst) { 
+int read_cfgfile(char *cfgfile, char *hst) {
 	FILE *f_cfg;
-	char host_ptn[LINE_MAX]; 
+	char host_ptn[LINE_MAX];
 
 	if ((f_cfg = fopen(cfgfile, "r")) == NULL) {
 		fprintf(stderr, "Unable to open %s\n", cfgfile);
@@ -282,9 +286,14 @@ int read_cfgfile(char *cfgfile, char *hst) {
 	}
 
 	/* prepare pattern "host:" to seek host-keys */
-	strncpy(host_ptn, hst, strlen(hst)); 
-	strncat(host_ptn, ":", 1);
-	l_cfgp=l_cfg;
+	int len = strlen(hst);
+	if (len + 1 < sizeof(host_ptn)) {
+		strncpy(host_ptn, hst, len);
+		host_ptn[len] = ':';
+		host_ptn[len + 1] = '\0';
+	}
+
+	l_cfgp = l_cfg;
 
 	while (fgets(l_cfg, LINE_MAX, f_cfg) != NULL) {
 		/* Check if it's a comment */
@@ -302,12 +311,12 @@ int read_cfgfile(char *cfgfile, char *hst) {
 				host = strsep(&l_cfgp, ":");
 				username = strsep(&l_cfgp, ":");
 				password = strsep(&l_cfgp, ":");
-				commandline = strsep(&l_cfgp, "\n"); 
+				commandline = strsep(&l_cfgp, "\n");
 #endif
 				fclose(f_cfg);
 				return 0;
 			}
-		}	
+		}
 	}
 
 	/* key-host not found */
@@ -320,7 +329,7 @@ int read_cfgfile(char *cfgfile, char *hst) {
 static void usage(void) {
 	fprintf(stderr, "Fashion version: %s\n\
 Usage:\n\
-\tfashion host user password \"command line\"\n\
+\tfashion host user \"password\"s \"command line\"\n\
 \tfashion -f config.txt host\n", version);
 
 	exit(1);
